@@ -33,6 +33,8 @@
 
 #include "tile-detector.h"
 #include "tile-hist.h"
+#include "tile-hist-x.h"
+#include "tile-hist-z.h"
 
 using namespace std;
 
@@ -123,8 +125,6 @@ int main(int argc, char** argv) {
         "Physics List",
         "Particle",
         "Energy"};
-    char histoname[50];
-    char histotitle[100];
     char canvname[50];
 
     char canvtitle[100];
@@ -189,37 +189,19 @@ int main(int argc, char** argv) {
         exit(1);
     }
     
-    fname = string(argv[2]);
-    TileDetector detector(fname);
 
-    float edep_lim_mult = 40.;
-    float x_lim = detector.m_num-1;
-    float y_lim = detector.m_num-1;
-    float z_lim = detector.m_nlayers;
-    float ring_lim = (detector.m_num+1)/2;
-    float r2_lim = (x_lim*x_lim*detector.m_cellsize*detector.m_cellsize+y_lim*y_lim*detector.m_cellsize*detector.m_cellsize)/8.0;
-    //float r_lim = sqrt(r2_lim);
-    int n_x = detector.m_num;
-    int n_y = detector.m_num;
-    int n_z = detector.m_nlayers;
-    int n_rings = ring_lim;
-    //int n_r = 100;
-    int n_r2 = 100;
-
-
-
+    string dim_filename(argv[2]);
+    string detector_name(argv[3]);
+    TileDetector detector(detector_name,dim_filename);
 
     for (unsigned int index = 0; index < energies.size(); index++) {
-        TileHist * hEdepx;
-        TileHist * hEdepz;
-
         double Ein = energies[index];
+
+        detector.setup_plots(Ein);
         char Edirname[50];
         sprintf(Edirname, "Energy%.2fGeV", Ein);
         TDirectory * Edir = outfile->mkdir(Edirname);
         Edir->cd();
-
-
 
         TFile f(fnames[index].c_str());
         //f.GetListOfKeys()->Print();
@@ -230,18 +212,8 @@ int main(int argc, char** argv) {
         cout << endl << "Nr. of Events: " << nevent << endl;
         //loop over events
         
-        typedef map<G4ThreeVector,CalorimeterHit*> hitmap;
-        hitmap HitCol;
 
-        sprintf(histoname, "EdepZX%.2fGeV", Ein);
-        sprintf(histotitle, "Ionization Energy in X , (Ein %.2f GeV)",Ein);
-        hEdepx = new TileHist(histoname, histotitle, n_x, 0, x_lim);
-        //
-        sprintf(histoname, "EdepXY%.2fGeV", Ein);
-        sprintf(histotitle, "Ionization Energy in Z , (Ein %.2f GeV)",Ein);
-        hEdepz = new TileHist(histoname, histotitle, n_z, 0, z_lim);
-
-        for(Int_t i = 0; i<1000; i++)
+        for(Int_t i = 0; i<nevent; i++)
         {
             T->GetEntry(i);
             map<G4String, vector<G4VHit*> >* hcmap = event->GetHCMap();
@@ -255,72 +227,26 @@ int main(int argc, char** argv) {
                 G4int NbHits = hits.size();
                 vector<string> y = split((*hciter).first, '_');
                 string Classname = y[1];
-                G4ThreeVector hitPos;
-                G4ThreeVector hitIndex;
-                G4double newEdep;
-                hitmap::iterator it;
-                G4double oldEdep;
+
                 if (Classname == "Calorimeter") {
                     //cout << "There are " << NbHits << " hits in " << (*hciter).first << endl;
                     for (G4int ii = 0; ii < NbHits; ii++) {
                         CalorimeterHit* CalHit = dynamic_cast<CalorimeterHit*> (hits[ii]);
 
-                        hitPos = CalHit->GetPos();
-                        hitIndex = detector.find_index(hitPos);
-                        newEdep = CalHit->GetEdep();
-                        it = HitCol.find(hitIndex);
-                        if(it == HitCol.end()) {
-                            CalorimeterHit Hit;
-                            Hit.SetPos(hitPos);
-                            Hit.SetEdep(newEdep);
-                            HitCol[hitIndex] = new CalorimeterHit(Hit);
-                        } else {
-                            oldEdep = HitCol[hitIndex]->GetEdep();
-                            HitCol[hitIndex]->SetEdep(newEdep+oldEdep);
-                        }
+                        detector.fill_plots_xyz(CalHit->GetPos(),CalHit->GetEdep());
                     }
                 }
             }
-            G4double edep;
-            G4int nceren;
-            int nceren_cut = 10;
-            int nceren_count = 0;
-            for (hitmap::iterator it = HitCol.begin(); 
-                    it != HitCol.end();
-                    it++) {
-
-                edep = it->second->GetEdep();
-                int hitRing = detector.find_ring(it->first,false);
-                //fill Edep
-                if(edep) hEdepx->Fill(it->first.x(),edep/1e3);
-                if(edep) hEdepz->Fill(it->first.z(),edep/1e3);
-                delete it->second;
-            }
-            HitCol.clear();
+            detector.end_event();
             Edir->cd();
         }
 
-        hEdepx->GetXaxis()->SetTitle("X pos (cell)");
-        hEdepx->GetYaxis()->SetTitle("Energy (GeV)");
-        hEdepz->GetXaxis()->SetTitle("Z pos (cm)");
-        hEdepz->GetYaxis()->SetTitle("Energy (GeV)");
-        hEdepx->Write();
-        hEdepz->Write();
       
         gStyle->SetOptStat(1002211);
-        char filenamex[128];
-        char filenamez[128];
-        sprintf(filenamex,"%sx",argv[3]);
-        sprintf(filenamez,"%sz",argv[3]);
 
-        //save_plot(hEdepx,"canvas1", filenamex);
-        //save_plot(hEdepz,"canvas2", filenamez);
-        hEdepx->save_plot();
-        hEdepz->save_plot();
-
-
-        delete  hEdepx;
-        delete  hEdepz;
+        detector.write_plots();
+        detector.clear_plots();
+        
     }
 }
 
