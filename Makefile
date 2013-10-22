@@ -2,7 +2,9 @@ EXEC= ecal_gas_profile
 OBJS= tile-detector.o \
       tile-hist.o \
       tile-hist-x.o \
-      tile-hist-z.o
+      tile-hist-z.o \
+      tile-hist-ring.o \
+      tile-hist-x-zsplit.o
 
 TARGETS= $(addprefix bin/,$(EXEC))
 SOURCES=$(patsubst %,src/%.cc,$(EXEC))
@@ -13,12 +15,12 @@ CFLAGS= -Wall `root-config --cflags` `geant4-config --cflags` -I../CaTS/include 
 
 LDFLAGS = `root-config --glibs` `geant4-config --libs` -lCintex -L../CaTS-build -lClassesDict
 
-all: $(TARGETS) $(OBJECTFILES)
+all: $(TARGETS) 
 
 $(OBJECTFILES): bin/%.o : src/%.cc include/%.h
 	g++ -c -o $@ $(CFLAGS) $<
 
-$(TARGETS): bin/% : src/%.cc
+$(TARGETS): bin/% : src/%.cc $(OBJECTFILES)
 	g++ -o $@ $(CFLAGS) $(LDFLAGS) $< $(OBJECTFILES)
 
 depend: 
@@ -30,5 +32,8 @@ clean:
 #Special depends
 bin/ecal_gas_profile: bin/tile-detector.o bin/tile-hist-x.o
 bin/ecal_gas_profile: bin/tile-hist.o bin/tile-hist-z.o
+bin/ecal_gas_profile: bin/tile-hist-ring.o bin/tile-hist-x-zsplit.o
 bin/tile-hist-x.o: bin/tile-hist.o
+bin/tile-hist-x-zsplit.o: bin/tile-hist.o
 bin/tile-hist-z.o: bin/tile-hist.o
+bin/tile-hist-ring.o: bin/tile-hist.o

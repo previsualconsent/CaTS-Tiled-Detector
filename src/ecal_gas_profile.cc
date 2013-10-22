@@ -125,14 +125,7 @@ int main(int argc, char** argv) {
         "Physics List",
         "Particle",
         "Energy"};
-    char canvname[50];
 
-    char canvtitle[100];
-
-    typedef vector<TH1F*> vec_h;
-    typedef vector<vec_h> mat_h;
-    typedef vector<TH2F*> vec_2h;
-    typedef vector<vec_2h> mat_2h;
     TFile* outfile;
 
 
@@ -213,7 +206,7 @@ int main(int argc, char** argv) {
         //loop over events
         
 
-        for(Int_t i = 0; i<nevent; i++)
+        for(Int_t i = 0; i< nevent; i++)
         {
             T->GetEntry(i);
             map<G4String, vector<G4VHit*> >* hcmap = event->GetHCMap();
@@ -238,10 +231,10 @@ int main(int argc, char** argv) {
                 }
             }
             detector.end_event();
-            Edir->cd();
         }
 
       
+        Edir->cd();
         gStyle->SetOptStat(1002211);
 
         detector.write_plots();

@@ -10,13 +10,13 @@ class TileHist : public TH1F
    public:
       TileHist();
       TileHist(std::string tag, std::string name, std::string title, int n, int low, int high);
-      void save_plot();
-      void normalize(int nevents);
+      virtual void save_plot();
+      virtual void normalize(int nevents);
       virtual ~TileHist();
 
       virtual void fill_xyz(G4ThreeVector pos, float edep)=0;
 
-   private:
+   protected:
       std::string m_tag;
       bool m_norm;
 };

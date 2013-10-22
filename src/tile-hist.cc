@@ -36,6 +36,6 @@ void TileHist::save_plot() {
 
 void TileHist::normalize(int nevents) {
    if(!m_norm) Scale(1.0/double(nevents));
-   else std::cerr << "SECOND NORMALIZATION!! don't do that\n";
+   else std::cerr << "TileHist::SECOND NORMALIZATION!! don't do that\n";
    m_norm = true;
 }

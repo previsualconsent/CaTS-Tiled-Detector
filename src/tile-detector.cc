@@ -2,6 +2,10 @@
 #include <iostream>
 #include <stdlib.h>
 
+#include "tile-hist-x.h"
+#include "tile-hist-z.h"
+#include "tile-hist-ring.h"
+
 #include "tile-detector.h"
 
 TileDetector::TileDetector(std::string detector_name, std::string filename)
@@ -59,15 +63,11 @@ void TileDetector::setup_plots(double Ein)
    float x_lim = m_num-1;
    //float y_lim = m_num-1;
    float z_lim = m_nlayers;
-   //float ring_lim = (m_num+1)/2;
-   //float r2_lim = (x_lim*x_lim*m_cellsize*m_cellsize+y_lim*y_lim*m_cellsize*m_cellsize)/8.0;
-   //float r_lim = sqrt(r2_lim);
+   float ring_lim = (m_num+1)/2;
    int n_x = m_num;
    //int n_y = m_num;
    int n_z = m_nlayers;
-   //int n_rings = ring_lim;
-   //int n_r = 100;
-   //int n_r2 = 100;
+   int n_rings = ring_lim;
 
    char histoname[50];
    char histotitle[100];
@@ -75,11 +75,14 @@ void TileDetector::setup_plots(double Ein)
    sprintf(histoname, "EdepX%.2fGeV", Ein);
    sprintf(histotitle, "Ionization Energy in X , (Ein %.2f GeV)",Ein);
    m_plots.push_back(new TileHistX(m_detector_name,histoname, histotitle, n_x, x_lim));
-
    //
    sprintf(histoname, "EdepZ%.2fGeV", Ein);
    sprintf(histotitle, "Ionization Energy in Z , (Ein %.2f GeV)",Ein);
    m_plots.push_back(new TileHistZ(m_detector_name,histoname, histotitle, n_z, z_lim));
+   //
+   sprintf(histoname, "PercRing%.2fGeV", Ein);
+   sprintf(histotitle, "Percent Per Ring , (Ein %.2f GeV)",Ein);
+   m_plots.push_back(new TileHistRing(m_detector_name,histoname, histotitle, n_rings, ring_lim));
 
 }
 
@@ -98,11 +101,6 @@ G4ThreeVector TileDetector::find_index(G4ThreeVector pos)
          int(pos.z()/m_layertotal + m_nlayers/2.0));
 }
 
-int TileDetector::find_ring(G4ThreeVector pos,bool to_index) {
-    if(to_index) pos = find_index(pos);
-    int center = (m_num-1)/2;
-    return int(std::max(abs(pos.x()-center),abs(pos.y()-center)));
-}
 
 void TileDetector::end_event()
 {
@@ -113,6 +111,7 @@ void TileDetector::write_plots()
 {
    for(v_plots::iterator hist = m_plots.begin(); hist!=m_plots.end(); hist++)
    {
+      std::cout << "Writing Plots\n";
       (*hist)->normalize(m_nevents);
       (*hist)->Write();
       (*hist)->save_plot();
