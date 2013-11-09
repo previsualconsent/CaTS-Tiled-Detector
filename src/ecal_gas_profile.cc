@@ -31,7 +31,7 @@
 #include "Event.hh"
 #include "CalorimeterHit.hh"
 
-#include "tile-detector.h"
+#include "tile-detector-plots.h"
 #include "tile-hist.h"
 #include "tile-hist-x.h"
 #include "tile-hist-z.h"
@@ -185,7 +185,7 @@ int main(int argc, char** argv) {
 
     string dim_filename(argv[2]);
     string detector_name(argv[3]);
-    TileDetector detector(detector_name,dim_filename);
+    TileDetectorPlots detector(detector_name,dim_filename);
 
     for (unsigned int index = 0; index < energies.size(); index++) {
         double Ein = energies[index];

@@ -28,7 +28,9 @@ void TileHist::save_plot() {
     Draw();
     c->Update();
     char filename[128];
-    sprintf(filename,"%s-%s.png",m_tag.c_str(),fName.Data());
+
+    sprintf(filename,"%s_%s.png",m_tag.c_str(),fName.Data());
+    std::cout << "debug filename: " << filename << std::endl;
     c->SaveAs(filename);
 
     delete c;
@@ -38,4 +40,10 @@ void TileHist::normalize(int nevents) {
    if(!m_norm) Scale(1.0/double(nevents));
    else std::cerr << "TileHist::SECOND NORMALIZATION!! don't do that\n";
    m_norm = true;
+}
+
+data_map TileHist::get_data()
+{
+   data_map empty;
+   return empty;
 }

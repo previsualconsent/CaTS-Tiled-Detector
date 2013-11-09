@@ -3,12 +3,14 @@
 #include <stdlib.h>
 
 #include "tile-hist-x.h"
+#include "tile-hist-x-zsplit.h"
 #include "tile-hist-z.h"
-#include "tile-hist-ring.h"
+#include "tile-hist-radius.h"
+#include "tile-hist-energy.h"
 
-#include "tile-detector.h"
+#include "tile-detector-plots.h"
 
-TileDetector::TileDetector(std::string detector_name, std::string filename)
+TileDetectorPlots::TileDetectorPlots(std::string detector_name, std::string filename)
 {
 
    m_detector_name = detector_name;
@@ -56,44 +58,62 @@ TileDetector::TileDetector(std::string detector_name, std::string filename)
 
 }
 
-void TileDetector::setup_plots(double Ein)
+void TileDetectorPlots::setup_plots(double Ein)
 {
    m_plots.clear();
 
    float x_lim = m_num-1;
    //float y_lim = m_num-1;
    float z_lim = m_nlayers;
-   float ring_lim = (m_num+1)/2;
+   //float ring_lim = (m_num+1)/2;
+   float r_lim = std::sqrt((2*x_lim*x_lim*m_cellsize*m_cellsize)/8.0);
    int n_x = m_num;
    //int n_y = m_num;
    int n_z = m_nlayers;
-   int n_rings = ring_lim;
+   //int n_rings = ring_lim;
+   int n_r = 100;
 
    char histoname[50];
    char histotitle[100];
 
-   sprintf(histoname, "EdepX%.2fGeV", Ein);
+   sprintf(histoname, "EdepX_%.2fGeV", Ein);
    sprintf(histotitle, "Ionization Energy in X , (Ein %.2f GeV)",Ein);
    m_plots.push_back(new TileHistX(m_detector_name,histoname, histotitle, n_x, x_lim));
    //
-   sprintf(histoname, "EdepZ%.2fGeV", Ein);
+   sprintf(histoname, "EdepZ_%.2fGeV", Ein);
    sprintf(histotitle, "Ionization Energy in Z , (Ein %.2f GeV)",Ein);
    m_plots.push_back(new TileHistZ(m_detector_name,histoname, histotitle, n_z, z_lim));
    //
-   sprintf(histoname, "PercRing%.2fGeV", Ein);
-   sprintf(histotitle, "Percent Per Ring , (Ein %.2f GeV)",Ein);
-   m_plots.push_back(new TileHistRing(m_detector_name,histoname, histotitle, n_rings, ring_lim));
+   sprintf(histoname, "PercRadius%.2fGeV", Ein);
+   sprintf(histotitle, "Percent inside Radius , (Ein %.2f GeV)",Ein);
+   m_plots.push_back(new TileHistRadius(m_detector_name,histoname, histotitle, n_r, r_lim,m_num));
+
+   sprintf(histoname, "XProf_Z0-5_%.2fGeV", Ein);
+   sprintf(histotitle, "X Profile 0-5 Layers, (Ein %.2f GeV)",Ein);
+   m_plots.push_back(new TileHistXZSplit(m_detector_name,histoname, histotitle, n_x, x_lim,0,5));
+
+   sprintf(histoname, "XProf_Z5-15_%.2fGeV", Ein);
+   sprintf(histotitle, "X Profile 5-15 Layers, (Ein %.2f GeV)",Ein);
+   m_plots.push_back(new TileHistXZSplit(m_detector_name,histoname, histotitle, n_x, x_lim,5,15));
+
+   sprintf(histoname, "XProf_Z15-25_%.2fGeV", Ein);
+   sprintf(histotitle, "X Profile 15-25 Layers, (Ein %.2f GeV)",Ein);
+   m_plots.push_back(new TileHistXZSplit(m_detector_name,histoname, histotitle, n_x, x_lim,15,25));
+
+   sprintf(histoname, "Energy_%.2fGeV", Ein);
+   sprintf(histotitle, "Energy Response, (Ein %.2f GeV)",Ein);
+   m_plots.push_back(new TileHistEnergy(m_detector_name,histoname, histotitle, 100, 0,5000));
 
 }
 
-void TileDetector::fill_plots_xyz(G4ThreeVector pos,float edep)
+void TileDetectorPlots::fill_plots_xyz(G4ThreeVector pos,float edep)
 {
    for(v_plots::iterator hist = m_plots.begin(); hist!=m_plots.end(); hist++)
    {
       (*hist)->fill_xyz(find_index(pos),edep);
    }
 }
-G4ThreeVector TileDetector::find_index(G4ThreeVector pos) 
+G4ThreeVector TileDetectorPlots::find_index(G4ThreeVector pos) 
 {
    return G4ThreeVector(
          int(pos.x()/m_cellsize + m_num/2.0),
@@ -102,12 +122,12 @@ G4ThreeVector TileDetector::find_index(G4ThreeVector pos)
 }
 
 
-void TileDetector::end_event()
+void TileDetectorPlots::end_event()
 {
    m_nevents++;
 }
 
-void TileDetector::write_plots()
+void TileDetectorPlots::write_plots()
 {
    for(v_plots::iterator hist = m_plots.begin(); hist!=m_plots.end(); hist++)
    {
@@ -119,7 +139,7 @@ void TileDetector::write_plots()
 
 }
 
-void TileDetector::clear_plots()
+void TileDetectorPlots::clear_plots()
 {
    for(v_plots::iterator hist = m_plots.begin(); hist!=m_plots.end(); hist++)
    {
