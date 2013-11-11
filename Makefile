@@ -1,5 +1,6 @@
 EXEC= ecal_gas_profile
 OBJS= tile-detector-plots.o \
+      tile-detector.o \
       tile-hist.o \
       tile-hist-x.o \
       tile-hist-z.o \
@@ -36,6 +37,7 @@ bin/ecal_gas_profile: bin/tile-detector-plots.o bin/tile-hist-x.o
 bin/ecal_gas_profile: bin/tile-hist.o bin/tile-hist-z.o
 bin/ecal_gas_profile: bin/tile-hist-ring.o bin/tile-hist-x-zsplit.o
 bin/ecal_gas_profile: bin/tile-hist-radius.o bin/tile-hist-energy.o
+bin/ecal_gas_profile: bin/tile-detector.o 
 bin/tile-hist-x.o: bin/tile-hist.o
 bin/tile-hist-x-zsplit.o: bin/tile-hist.o
 bin/tile-hist-z.o: bin/tile-hist.o

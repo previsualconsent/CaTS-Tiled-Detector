@@ -31,7 +31,7 @@ void TileHistEnergy::fill_xyz(G4ThreeVector pos, float edep)
 }
 
 void TileHistEnergy::normalize(int nevents) {
-   //if(!m_norm) Scale(1.0/Integral());
+   if(!m_norm && Integral()!=0) Scale(1.0/Integral());
    m_norm = true;
 }
 

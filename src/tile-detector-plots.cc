@@ -102,7 +102,7 @@ void TileDetectorPlots::setup_plots(double Ein)
 
    sprintf(histoname, "Energy_%.2fGeV", Ein);
    sprintf(histotitle, "Energy Response, (Ein %.2f GeV)",Ein);
-   m_plots.push_back(new TileHistEnergy(m_detector_name,histoname, histotitle, 100, 0,5000));
+   m_plots.push_back(new TileHistEnergy(m_detector_name,histoname, histotitle, 100, 5*Ein,15*Ein));
 
 }
 
@@ -124,6 +124,10 @@ G4ThreeVector TileDetectorPlots::find_index(G4ThreeVector pos)
 
 void TileDetectorPlots::end_event()
 {
+   for(v_plots::iterator hist = m_plots.begin(); hist!=m_plots.end(); hist++)
+   {
+      (*hist)->end_event();
+   }
    m_nevents++;
 }
 
