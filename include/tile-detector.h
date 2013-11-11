@@ -10,7 +10,7 @@ struct plot_limits
    int n_bins;
    float low;
    float high;
-}
+};
 
 class TileDetector 
 {

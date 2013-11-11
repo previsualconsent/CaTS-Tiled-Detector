@@ -15,5 +15,3 @@ TileDetector::~TileDetector()
 {
 }
 
-void TileDetector::func() {
-}
