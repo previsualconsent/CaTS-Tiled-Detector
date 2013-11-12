@@ -31,6 +31,7 @@
 #include "Event.hh"
 #include "CalorimeterHit.hh"
 
+#include "tile-detector-uniform.h"
 #include "tile-detector-plots.h"
 #include "tile-hist.h"
 #include "tile-hist-x.h"
@@ -185,12 +186,14 @@ int main(int argc, char** argv) {
 
     string dim_filename(argv[2]);
     string detector_name(argv[3]);
-    TileDetectorPlots detector(detector_name,dim_filename);
+
+    TileDetectorUniform * detector = new TileDetectorUniform(detector_name,dim_filename);
+    TileDetectorPlots plots(detector);
 
     for (unsigned int index = 0; index < energies.size(); index++) {
         double Ein = energies[index];
 
-        detector.setup_plots(Ein);
+        plots.setup_plots(Ein);
         char Edirname[50];
         sprintf(Edirname, "Energy%.2fGeV", Ein);
         TDirectory * Edir = outfile->mkdir(Edirname);
@@ -226,19 +229,19 @@ int main(int argc, char** argv) {
                     for (G4int ii = 0; ii < NbHits; ii++) {
                         CalorimeterHit* CalHit = dynamic_cast<CalorimeterHit*> (hits[ii]);
 
-                        detector.fill_plots_xyz(CalHit->GetPos(),CalHit->GetEdep());
+                        plots.fill_plots_xyz(CalHit->GetPos(),CalHit->GetEdep());
                     }
                 }
             }
-            detector.end_event();
+            plots.end_event();
         }
 
       
         Edir->cd();
         gStyle->SetOptStat(1002211);
 
-        detector.write_plots();
-        detector.clear_plots();
+        plots.write_plots();
+        plots.clear_plots();
         
     }
 }

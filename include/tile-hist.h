@@ -6,13 +6,15 @@
 #include "TH1F.h"
 #include "G4ThreeVector.hh"
 
+#include "tile-detector.h"
+
 typedef std::map<std::string,float> data_map;
 
 class TileHist : public TH1F
 {
    public:
       TileHist();
-      TileHist(std::string tag, std::string name, std::string title, int n, int low, int high);
+      TileHist(TileDetector * detector, std::string name, std::string title, std::string dim);
       virtual ~TileHist();
 
       virtual void save_plot();
@@ -22,11 +24,11 @@ class TileHist : public TH1F
 
       virtual bool can_get_data(){ return false;}
 
-      std::string get_tag(){return m_tag;}
+      std::string get_detector_name(){return m_detector_name;}
       virtual data_map get_data();
 
    protected:
-      std::string m_tag;
+      std::string m_detector_name;
       bool m_norm;
 };
 

@@ -7,10 +7,10 @@ TileHist::TileHist()
 
 }
 
-TileHist::TileHist(std::string tag, std::string name, std::string title, int n, int low, int high) :
-   TH1F(name.c_str(), title.c_str(),n,low,high)
+TileHist::TileHist(TileDetector * detector, std::string name, std::string title,std::string dim) :
+   TH1F(name.c_str(), title.c_str(),detector->get_limits(dim).n_bins,detector->get_limits(dim).low,detector->get_limits(dim).high)
 {
-   m_tag = tag;
+   m_detector_name = detector->get_name();
    m_norm = false;
 }
 
@@ -29,7 +29,7 @@ void TileHist::save_plot() {
     c->Update();
     char filename[128];
 
-    sprintf(filename,"%s_%s.png",m_tag.c_str(),fName.Data());
+    sprintf(filename,"%s_%s.png",m_detector_name.c_str(),fName.Data());
     std::cout << "debug filename: " << filename << std::endl;
     c->SaveAs(filename);
 

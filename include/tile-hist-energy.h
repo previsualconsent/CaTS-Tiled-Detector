@@ -8,7 +8,7 @@ class TileHistEnergy : public TileHist
 {
    public:
       TileHistEnergy();
-      TileHistEnergy(std::string tag, std::string name, std::string title, int n_bins, float low_e, float high_e);
+      TileHistEnergy(TileDetector * detector, std::string name, std::string title);
       virtual ~TileHistEnergy();
       void fill_xyz(G4ThreeVector pos, float edep);
 
@@ -19,10 +19,7 @@ class TileHistEnergy : public TileHist
       data_map get_data();
 
    private:
-      float m_low_e;
-      float m_high_e;
       float m_total_energy;
-      int m_n_bins;
 
       data_map m_data;
       bool m_calculated;

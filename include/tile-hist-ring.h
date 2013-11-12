@@ -8,7 +8,7 @@ class TileHistRing : public TileHist
 {
    public:
       TileHistRing();
-      TileHistRing(std::string tag, std::string name, std::string title, int num, float ring_lim);
+      TileHistRing(TileDetector * detector, std::string name, std::string title);
       virtual ~TileHistRing();
       void fill_xyz(G4ThreeVector pos, float edep);
 
@@ -18,7 +18,7 @@ class TileHistRing : public TileHist
 
    private:
       int m_ring_lim;
-      int m_num;
+      int m_n_cells;
       float m_total_energy;
 };
 

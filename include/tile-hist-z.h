@@ -8,13 +8,11 @@ class TileHistZ : public TileHist
 {
    public:
       TileHistZ();
-      TileHistZ(std::string tag, std::string name, std::string title, int num, float z_lim);
+      TileHistZ(TileDetector * detector, std::string name, std::string title);
       virtual ~TileHistZ();
       void fill_xyz(G4ThreeVector pos, float edep);
 
    private:
-      int m_z_lim;
-      int m_num;
 };
 
 #endif // #ifndef tile_hist_z_h

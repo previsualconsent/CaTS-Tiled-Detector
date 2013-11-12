@@ -8,10 +8,10 @@ TileHistRing::TileHistRing()
 
 }
 
-TileHistRing::TileHistRing(std::string tag, std::string name, std::string title, int num, float ring_lim) : TileHist(tag,name.c_str(), title.c_str(),num,0,ring_lim) 
+TileHistRing::TileHistRing(TileDetector * detector, std::string name, std::string title) : TileHist(detector,name.c_str(), title.c_str(),"ring") 
 {
-   m_ring_lim = ring_lim;
-   m_num = num;
+   m_ring_lim = detector->get_limits("ring").high;
+   m_n_cells = detector->get_n_cells();
    m_total_energy = 0;
 
    GetXaxis()->SetTitle("Ring Number");
@@ -25,7 +25,7 @@ TileHistRing::~TileHistRing()
 
 void TileHistRing::fill_xyz(G4ThreeVector pos, float edep)
 {
-   int center = m_num-1;
+   int center = m_n_cells-1;
    int ring = int(std::max(abs(pos.x()-center),abs(pos.y()-center)));
    for(int i = m_ring_lim-1 ; i >=ring; i--)
       Fill(i,edep);
@@ -77,7 +77,7 @@ void TileHistRing::save_plot() {
 
    c->Update();
    char filename[128];
-   sprintf(filename,"%s-%s.png",m_tag.c_str(),fName.Data());
+   sprintf(filename,"%s-%s.png",m_detector_name.c_str(),fName.Data());
    c->SaveAs(filename);
 
    delete c;

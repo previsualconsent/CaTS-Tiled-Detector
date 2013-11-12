@@ -2,12 +2,12 @@
 #include <vector>
 #include "G4ThreeVector.hh"
 #include "tile-hist.h"
+#include "tile-detector.h"
 
 class TileDetectorPlots
 {
    public:
-      TileDetectorPlots(std::string detector_name, std::string filename);
-      G4ThreeVector find_index(G4ThreeVector pos);
+      TileDetectorPlots(TileDetector * detector);
       void setup_plots(double Ein);
       void fill_plots_xyz(G4ThreeVector pos,float edep);
       void end_event();
@@ -15,14 +15,10 @@ class TileDetectorPlots
       void clear_plots();
 
    protected:
-      float m_num;
-      float m_cellsize;
-      float m_nlayers;
-      float m_absthick;
-      float m_szthick;
-      float m_layertotal;
+
       float m_nevents;
-      std::string m_detector_name;
+
+      TileDetector * m_detector;
 
       typedef std::vector<TileHist*> v_plots;
       v_plots m_plots;

@@ -6,11 +6,8 @@ TileHistX::TileHistX()
 
 }
 
-TileHistX::TileHistX(std::string tag, std::string name, std::string title, int num, float x_lim) : TileHist(tag,name.c_str(), title.c_str(),num,0,x_lim) 
+TileHistX::TileHistX(TileDetector * detector, std::string name, std::string title) : TileHist(detector,name.c_str(), title.c_str(),"x") 
 {
-   m_x_lim = x_lim;
-   m_num = num;
-
    GetXaxis()->SetTitle("X pos (cell)");
    GetYaxis()->SetTitle("Energy (GeV)");
 }

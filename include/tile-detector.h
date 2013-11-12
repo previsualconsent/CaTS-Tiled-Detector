@@ -22,9 +22,14 @@ class TileDetector
       virtual G4ThreeVector find_index(G4ThreeVector pos)=0;
       virtual plot_limits get_limits(std::string dim)=0;
 
+      std::string get_name(){return m_detector_name;}
+      int get_n_cells(){return m_n_cells;}
+
    protected:
       std::string m_detector_name;
       std::string m_filename;
+
+      int m_n_cells;
 
    private:
 

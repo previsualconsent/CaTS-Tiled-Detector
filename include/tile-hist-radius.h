@@ -8,7 +8,7 @@ class TileHistRadius : public TileHist
 {
    public:
       TileHistRadius();
-      TileHistRadius(std::string tag, std::string name, std::string title, int n_r, float r_lim,int n_cells);
+      TileHistRadius(TileDetector * detector, std::string name, std::string title);
       virtual ~TileHistRadius();
       void fill_xyz(G4ThreeVector pos, float edep);
 

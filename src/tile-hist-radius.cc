@@ -9,11 +9,12 @@ TileHistRadius::TileHistRadius()
 
 }
 
-TileHistRadius::TileHistRadius(std::string tag, std::string name, std::string title, int n_r, float r_lim,int n_cells) : TileHist(tag,name.c_str(), title.c_str(),n_r,0,r_lim) 
+TileHistRadius::TileHistRadius(TileDetector * detector, std::string name, std::string title) : TileHist(detector,name.c_str(), title.c_str(),"r") 
 {
-   m_r_lim = r_lim;
-   m_num = n_r;
-   m_n_cells = n_cells;
+   plot_limits lim = detector->get_limits("r");
+   m_r_lim = lim.high;
+   m_num = lim.n_bins;
+   m_n_cells = detector->get_n_cells();
    m_total_energy = 0;
 
    GetXaxis()->SetTitle("Radius (cells)");
@@ -65,7 +66,7 @@ void TileHistRadius::save_plot() {
 
    c->Update();
    char filename[128];
-   sprintf(filename,"%s_%s.png",m_tag.c_str(),fName.Data());
+   sprintf(filename,"%s_%s.png",m_detector_name.c_str(),fName.Data());
    c->SaveAs(filename);
 
    delete c;
