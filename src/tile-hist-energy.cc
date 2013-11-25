@@ -12,6 +12,7 @@ TileHistEnergy::TileHistEnergy()
 TileHistEnergy::TileHistEnergy(TileDetector * detector, std::string name, std::string title) : TileHist(detector,name.c_str(), title.c_str(),"energy") 
 {
    m_total_energy = 0;
+   m_calculated = false;
 
    GetXaxis()->SetTitle("Energy (MeV)");
    GetYaxis()->SetTitle("NEvents");
@@ -45,6 +46,8 @@ void TileHistEnergy::calc_data()
    if(!m_calculated)
    {
       m_data["RMS"]=GetRMS();
+      m_data["Mean"]=GetMean();
+      m_data["Res"]=m_data["RMS"]/m_data["Mean"];
    }
    m_calculated=true;
 }

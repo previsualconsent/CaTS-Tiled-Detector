@@ -16,6 +16,7 @@ TileHistRadius::TileHistRadius(TileDetector * detector, std::string name, std::s
    m_num = lim.n_bins;
    m_n_cells = detector->get_n_cells();
    m_total_energy = 0;
+   m_calculated = false;
 
    GetXaxis()->SetTitle("Radius (cells)");
    GetYaxis()->SetTitle("Percent Energy (cumulative)");

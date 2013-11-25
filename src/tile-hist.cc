@@ -8,7 +8,10 @@ TileHist::TileHist()
 }
 
 TileHist::TileHist(TileDetector * detector, std::string name, std::string title,std::string dim) :
-   TH1F(name.c_str(), title.c_str(),detector->get_limits(dim).n_bins,detector->get_limits(dim).low,detector->get_limits(dim).high)
+   TH1F(name.c_str(), title.c_str(),
+         detector->get_limits(dim).n_bins,
+         detector->get_limits(dim).low,
+         detector->get_limits(dim).high)
 {
    m_detector_name = detector->get_name();
    m_norm = false;
