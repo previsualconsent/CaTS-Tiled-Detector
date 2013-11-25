@@ -32,6 +32,7 @@
 #include "CalorimeterHit.hh"
 
 #include "tile-detector-uniform.h"
+#include "tile-detector-sectioned.h"
 #include "tile-detector-plots.h"
 #include "tile-hist.h"
 #include "tile-hist-x.h"
@@ -122,6 +123,7 @@ int main(int argc, char** argv) {
     }
     vector<string> fnames;
     vector<double> energies;
+    vector<string> detector_type;
     string tags[4] = {"Material",
         "Physics List",
         "Particle",
@@ -157,6 +159,7 @@ int main(int argc, char** argv) {
                 string particle = tagvalue[2];
                 string energy = tagvalue[3];
                 fnames.push_back(line);
+                detector_type.push_back(material);
                 energies.push_back(evalue);
             }
         }
@@ -187,7 +190,19 @@ int main(int argc, char** argv) {
     string dim_filename(argv[2]);
     string detector_name(argv[3]);
 
-    TileDetectorUniform * detector = new TileDetectorUniform(detector_name,dim_filename);
+    TileDetector * detector;
+    std::size_t found = detector_type[0].find("sect");
+    if(found==std::string::npos)
+    {
+       cout << "Using Uniform Dectector\n";
+       detector = new TileDetectorUniform(detector_name,dim_filename);
+    }
+    else
+    {
+       cout << "Using Sectioned Dectector\n";
+       detector = new TileDetectorSectioned(detector_name,dim_filename);
+    }
+
     TileDetectorPlots plots(detector);
 
     for (unsigned int index = 0; index < energies.size(); index++) {
@@ -215,7 +230,7 @@ int main(int argc, char** argv) {
             map<G4String, vector<G4VHit*> >* hcmap = event->GetHCMap();
 
             if(!(i % 1000))
-               cout << "Event " << i << ": There are " << hcmap->size() << "Hit Collections" << endl;
+               cout << "Event " << i << endl;
             map<G4String, vector<G4VHit*> >::iterator hciter;
 
             for (hciter = hcmap->begin(); hciter != hcmap->end(); hciter++) {
@@ -244,6 +259,8 @@ int main(int argc, char** argv) {
         plots.clear_plots();
         
     }
+    outfile->cd();
+    plots.write_graphs();
 }
 
 
