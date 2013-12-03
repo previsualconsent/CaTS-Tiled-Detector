@@ -34,9 +34,7 @@
 #include "tile-detector-uniform.h"
 #include "tile-detector-sectioned.h"
 #include "tile-detector-plots.h"
-#include "tile-hist.h"
-#include "tile-hist-x.h"
-#include "tile-hist-z.h"
+#include "energy-graph-res.h"
 
 using namespace std;
 
