@@ -9,7 +9,9 @@ OBJS= tile-detector-plots.o \
       tile-hist-ring.o \
       tile-hist-radius.o \
       tile-hist-energy.o \
-      tile-hist-x-zsplit.o
+      tile-hist-x-zsplit.o \
+      energy-graph.o \
+      energy-graph-res.o
 
 TARGETS= $(addprefix bin/,$(EXEC))
 SOURCES=$(patsubst %,src/%.cc,$(EXEC))
