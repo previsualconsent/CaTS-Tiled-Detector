@@ -30,6 +30,12 @@ TileDetectorUniform::TileDetectorUniform(std::string detector_name, std::string 
       getline(infile, line);
       m_szthick=atof(line.c_str());
 
+      getline(infile, line);
+      m_energy_low=atof(line.c_str());
+
+      getline(infile, line);
+      m_energy_high=atof(line.c_str());
+
       m_layertotal = m_absthick + m_szthick;
 
       infile.close();
@@ -86,8 +92,8 @@ plot_limits TileDetectorUniform::get_limits(std::string dim)
    else if (dim =="energy")
    {
       ret.n_bins = 100;
-      ret.low = 3*m_current_energy;
-      ret.high = 8*m_current_energy;
+      ret.low = m_energy_low*m_current_energy;
+      ret.high = m_energy_high*m_current_energy;
    }
    return ret;
 }

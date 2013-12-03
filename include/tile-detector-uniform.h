@@ -22,6 +22,8 @@ class TileDetectorUniform : public TileDetector
       float m_absthick;
       float m_szthick;
       float m_layertotal;
+      float m_energy_low;
+      float m_energy_high;
 };
 
 #endif // #ifndef tile_detector_uniform_h
