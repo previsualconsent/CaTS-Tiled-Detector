@@ -8,6 +8,8 @@
 #include "tile-hist-radius.h"
 #include "tile-hist-energy.h"
 
+#include "energy-graph-res.h"
+
 #include "TGraph.h"
 #include "TCanvas.h"
 
@@ -18,6 +20,8 @@ TileDetectorPlots::TileDetectorPlots(TileDetector * detector)
 
    m_detector = detector;
    m_nevents = 0;
+
+   m_graphs.push_back(new EnergyGraphRes(m_detector->get_name()+"_Resolution"));
 }
 
 void TileDetectorPlots::setup_plots(double Ein)
@@ -28,6 +32,11 @@ void TileDetectorPlots::setup_plots(double Ein)
    m_moliere.push_back(0);
    m_detector->set_current_energy(Ein);
    m_plots.clear();
+
+   for(v_graphs::iterator graph = m_graphs.begin(); graph!=m_graphs.end(); graph++)
+   {
+      (*graph)->start_energy(Ein);
+   }
 
    char histoname[50];
    char histotitle[100];
@@ -56,9 +65,9 @@ void TileDetectorPlots::setup_plots(double Ein)
    sprintf(histotitle, "X Profile 15-25 Layers, (Ein %.2f GeV)",Ein);
    m_plots.push_back(new TileHistXZSplit(m_detector,histoname, histotitle,15,25));
 
-   sprintf(histoname, "Energy_%.2fGeV", Ein);
-   sprintf(histotitle, "Energy Response, (Ein %.2f GeV)",Ein);
-   m_plots.push_back(new TileHistEnergy(m_detector,histoname, histotitle));
+   //sprintf(histoname, "Energy_%.2fGeV", Ein);
+   //sprintf(histotitle, "Energy Response, (Ein %.2f GeV)",Ein);
+   //m_plots.push_back(new TileHistEnergy(m_detector,histoname, histotitle));
 
 }
 
@@ -69,6 +78,12 @@ void TileDetectorPlots::fill_plots_xyz(G4ThreeVector pos,float edep)
    {
       (*hist)->fill_xyz(index,edep);
    }
+
+   for(v_graphs::iterator graph = m_graphs.begin(); graph!=m_graphs.end(); graph++)
+   {
+      (*graph)->fill_xyz(index,edep);
+   }
+
 }
 
 void TileDetectorPlots::end_event()
@@ -76,6 +91,10 @@ void TileDetectorPlots::end_event()
    for(v_plots::iterator hist = m_plots.begin(); hist!=m_plots.end(); hist++)
    {
       (*hist)->end_event();
+   }
+   for(v_graphs::iterator graph = m_graphs.begin(); graph!=m_graphs.end(); graph++)
+   {
+      (*graph)->end_event();
    }
    m_nevents++;
 }
@@ -114,17 +133,26 @@ void TileDetectorPlots::clear_plots()
    {
       delete (*hist);
    }
+   for(v_graphs::iterator graph = m_graphs.begin(); graph!=m_graphs.end(); graph++)
+   {
+      (*graph)->end_energy();
+   }
 
 }
 
 void TileDetectorPlots::write_graphs()
 {
+   for(v_graphs::iterator graph = m_graphs.begin(); graph!=m_graphs.end(); graph++)
+   {
+      (*graph)->write();
+   }
+
    std::string graphname,graphtitle,xtitle,ytitle;
-   graphname = m_detector->get_name() + "_res";
-   graphtitle = "Resolution vs Energy";
-   xtitle = "Energy (GeV)";
-   ytitle = "Res (#sigma/#mu)";
-   write_graph(m_energies,m_res,graphname,graphtitle,xtitle,ytitle);
+   //graphname = m_detector->get_name() + "_res";
+   //graphtitle = "Resolution vs Energy";
+   //xtitle = "Energy (GeV)";
+   //ytitle = "Res (#sigma/#mu)";
+   //write_graph(m_energies,m_res,graphname,graphtitle,xtitle,ytitle);
 
    graphname = m_detector->get_name() + "_moliere";
    graphtitle = "Moliere Radius vs Energy";

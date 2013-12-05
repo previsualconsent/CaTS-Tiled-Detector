@@ -1,6 +1,7 @@
 #include "energy-graph-res.h"
 #include "TH1F.h"
 #include <algorithm>
+#include <iostream>
 
 EnergyGraphRes::EnergyGraphRes(std::string name) : EnergyGraph("Resolution vs Energy",name +"_res","Res (#sigma/#mu)")
 {
@@ -41,5 +42,7 @@ void EnergyGraphRes::end_energy()
  if( hist->Integral() != 0 ) hist->Scale(1.0/hist->Integral());
  hist->Write();
 
+ 
  m_data.push_back(hist->GetRMS()/hist->GetMean());
+ m_histv.clear();
 }

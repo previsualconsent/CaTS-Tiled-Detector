@@ -34,7 +34,6 @@
 #include "tile-detector-uniform.h"
 #include "tile-detector-sectioned.h"
 #include "tile-detector-plots.h"
-#include "energy-graph-res.h"
 
 using namespace std;
 
@@ -218,7 +217,7 @@ int main(int argc, char** argv) {
         TTree *T = (TTree*) f.Get("T");
         T->SetBranchAddress("event.", &event);
         Int_t nevent = T->GetEntries();
-        cout << endl << "Nr. of Events: " << nevent << endl;
+        cout << endl << Ein << "GeV: " << nevent << "Events" << endl;
         //loop over events
         
 

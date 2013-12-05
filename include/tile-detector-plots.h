@@ -3,6 +3,7 @@
 #include "G4ThreeVector.hh"
 #include "tile-hist.h"
 #include "tile-detector.h"
+#include "energy-graph.h"
 
 class TileDetectorPlots
 {
@@ -28,6 +29,8 @@ class TileDetectorPlots
       v_plots m_plots;
       typedef std::vector<TH1F*> v_hists;
       v_hists m_hists;
+      typedef std::vector<EnergyGraph*> v_graphs;
+      v_graphs m_graphs;
 
       std::vector<float> m_energies;
       std::vector<float> m_res;

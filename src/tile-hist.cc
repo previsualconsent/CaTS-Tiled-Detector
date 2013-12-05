@@ -33,7 +33,6 @@ void TileHist::save_plot() {
     char filename[128];
 
     sprintf(filename,"%s_%s.png",m_detector_name.c_str(),fName.Data());
-    std::cout << "debug filename: " << filename << std::endl;
     c->SaveAs(filename);
 
     delete c;
