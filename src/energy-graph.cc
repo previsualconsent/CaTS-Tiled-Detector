@@ -35,8 +35,9 @@ void EnergyGraph::write() {
 
    c->Update();
    c->Write();
-   c->SaveAs(m_name.c_str());
+   c->SaveAs((m_name+".png").c_str());
 
+   m_graph->SetName(m_name.c_str());
    m_graph->Write();
 
    delete c;

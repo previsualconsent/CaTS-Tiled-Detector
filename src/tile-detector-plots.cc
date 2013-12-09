@@ -9,6 +9,7 @@
 #include "tile-hist-energy.h"
 
 #include "energy-graph-res.h"
+#include "energy-graph-z-template.h"
 
 #include "TGraph.h"
 #include "TCanvas.h"
@@ -21,7 +22,8 @@ TileDetectorPlots::TileDetectorPlots(TileDetector * detector)
    m_detector = detector;
    m_nevents = 0;
 
-   m_graphs.push_back(new EnergyGraphRes(m_detector->get_name()+"_Resolution"));
+   m_graphs.push_back(new EnergyGraphRes(m_detector->get_name()));
+   m_graphs.push_back(new EnergyGraphZTemplate(m_detector));
 }
 
 void TileDetectorPlots::setup_plots(double Ein)

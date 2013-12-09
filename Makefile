@@ -11,7 +11,8 @@ OBJS= tile-detector-plots.o \
       tile-hist-energy.o \
       tile-hist-x-zsplit.o \
       energy-graph.o \
-      energy-graph-res.o
+      energy-graph-res.o \
+      energy-graph-z-template.o
 
 TARGETS= $(addprefix bin/,$(EXEC))
 SOURCES=$(patsubst %,src/%.cc,$(EXEC))
@@ -37,18 +38,22 @@ clean:
 	rm -f $(TARGETS) 
 
 #Special depends
-bin/make_plots: bin/tile-detector-plots.o bin/tile-hist-x.o
-bin/make_plots: bin/tile-hist.o bin/tile-hist-z.o
-bin/make_plots: bin/tile-hist-ring.o bin/tile-hist-x-zsplit.o
-bin/make_plots: bin/tile-hist-radius.o bin/tile-hist-energy.o
-bin/make_plots: bin/tile-detector-uniform.o bin/tile-detector-sectioned.o 
+bin/make_plots: include/tile-detector-plots.h include/tile-hist-x.h
+bin/make_plots: include/tile-hist.h include/tile-hist-z.h
+bin/make_plots: include/tile-hist-ring.h include/tile-hist-x-zsplit.h
+bin/make_plots: include/tile-hist-radius.h include/tile-hist-energy.h
+bin/make_plots: include/tile-detector-uniform.h include/tile-detector-sectioned.h 
 
-bin/tile-hist-x.o: bin/tile-hist.o
-bin/tile-hist-x-zsplit.o: bin/tile-hist.o
-bin/tile-hist-z.o: bin/tile-hist.o
-bin/tile-hist-ring.o: bin/tile-hist.o
-bin/tile-hist-radius.o: bin/tile-hist.o
-bin/tile-hist-energy.o: bin/tile-hist.o
-bin/tile-detector.o: bin/tile-hist.o
-bin/tile-detector-uniform.o: bin/tile-detector.o
-bin/tile-detector-sectioned.o: bin/tile-detector.o
+bin/tile-hist-x.o: include/tile-hist.h
+bin/tile-hist-x-zsplit.o: include/tile-hist.h
+bin/tile-hist-z.o: include/tile-hist.h
+bin/tile-hist-ring.o: include/tile-hist.h
+bin/tile-hist-radius.o: include/tile-hist.h
+bin/tile-hist-energy.o: include/tile-hist.h
+bin/tile-detector.o: include/tile-hist.h
+bin/tile-detector-plots.o: include/energy-graph-res.h
+bin/tile-detector-plots.o: include/energy-graph-z-template.h
+bin/tile-detector-plots.o: include/tile-hist-z.h include/tile-hist-radius.h
+bin/tile-detector-plots.o: include/tile-hist-energy.h
+bin/tile-detector-uniform.o: include/tile-detector.h
+bin/tile-detector-sectioned.o: include/tile-detector.h
